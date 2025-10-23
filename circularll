@@ -1,0 +1,117 @@
+#include <iostream>
+using namespace std;
+
+class CNode {
+public:
+    int data;
+    CNode* next;
+    
+    CNode(int val) {
+        data = val;
+        next = nullptr;
+    }
+};
+
+class CircularList {
+private:
+    CNode* last;
+    
+public:
+    CircularList() {
+        last = nullptr;
+    }
+    
+    void insert(int x) {
+        CNode* newNode = new CNode(x);
+        
+        if (last == nullptr) {
+            last = newNode;
+            last->next = last;
+        } else {
+            newNode->next = last->next;
+            last->next = newNode;
+            last = newNode;
+        }
+    }
+    
+    void remove(int x) {
+        if (last == nullptr) {
+            cout << "List empty!" << endl;
+            return;
+        }
+        
+        CNode *curr = last->next, *prev = last;
+        
+        do {
+            if (curr->data == x) {
+                if (curr == last && curr->next == last) {
+                    delete curr;
+                    last = nullptr;
+                    return;
+                }
+                
+                prev->next = curr->next;
+                if (curr == last) last = prev;
+                
+                delete curr;
+                return;
+            }
+            prev = curr;
+            curr = curr->next;
+        } while (curr != last->next);
+        
+        cout << "Element " << x << " not found!" << endl;
+    }
+    
+    CNode* search(int x) {
+        if (last == nullptr) return nullptr;
+        
+        CNode* temp = last->next;
+        
+        do {
+            if (temp->data == x) return temp;
+            temp = temp->next;
+        } while (temp != last->next);
+        
+        return nullptr;
+    }
+    
+    void display() {
+        if (last == nullptr) {
+            cout << "List empty!" << endl;
+            return;
+        }
+        
+        CNode* temp = last->next;
+        cout << "Circular: ";
+        
+        do {
+            cout << temp->data << " -> ";
+            temp = temp->next;
+        } while (temp != last->next);
+        
+        cout << "(back to start)" << endl;
+    }
+};
+
+int main() {
+    CircularList clist;
+    
+    clist.insert(10);
+    clist.insert(20);
+    clist.insert(30);
+    clist.insert(40);
+    clist.display();
+    
+    clist.remove(20);
+    clist.display();
+    
+    clist.remove(10);
+    clist.display();
+    
+    CNode* found = clist.search(30);
+    if (found) cout << "Found 30!" << endl;
+    else cout << "30 not found!" << endl;
+    
+    return 0;
+}
