@@ -1,0 +1,134 @@
+#include <iostream>
+using namespace std;
+
+class BSTNode {
+public:
+    int data;
+    BSTNode* left;
+    BSTNode* right;
+    
+    BSTNode(int val) {
+        data = val;
+        left = right = nullptr;
+    }
+};
+
+class BST {
+private:
+    BSTNode* root;
+    
+    BSTNode* insert(BSTNode* node, int x) {
+        if (node == nullptr) return new BSTNode(x);
+        
+        if (x < node->data) node->left = insert(node->left, x);
+        else if (x > node->data) node->right = insert(node->right, x);
+        
+        return node;
+    }
+    
+    BSTNode* findMin(BSTNode* node) {
+        while (node->left != nullptr) node = node->left;
+        return node;
+    }
+    
+    BSTNode* remove(BSTNode* node, int x) {
+        if (node == nullptr) return nullptr;
+        
+        if (x < node->data) node->left = remove(node->left, x);
+        else if (x > node->data) node->right = remove(node->right, x);
+        else {
+            if (node->left == nullptr) {
+                BSTNode* temp = node->right;
+                delete node;
+                return temp;
+            } else if (node->right == nullptr) {
+                BSTNode* temp = node->left;
+                delete node;
+                return temp;
+            }
+            
+            BSTNode* temp = findMin(node->right);
+            node->data = temp->data;
+            node->right = remove(node->right, temp->data);
+        }
+        return node;
+    }
+    
+    BSTNode* search(BSTNode* node, int x) {
+        if (node == nullptr || node->data == x) return node;
+        
+        if (x < node->data) return search(node->left, x);
+        else return search(node->right, x);
+    }
+    
+    void preorder(BSTNode* node) {
+        if (node != nullptr) {
+            cout << node->data << " ";
+            preorder(node->left);
+            preorder(node->right);
+        }
+    }
+    
+    void inorder(BSTNode* node) {
+        if (node != nullptr) {
+            inorder(node->left);
+            cout << node->data << " ";
+            inorder(node->right);
+        }
+    }
+    
+    void postorder(BSTNode* node) {
+        if (node != nullptr) {
+            postorder(node->left);
+            postorder(node->right);
+            cout << node->data << " ";
+        }
+    }
+    
+public:
+    BST() {
+        root = nullptr;
+    }
+    
+    void insert(int x) {
+        root = insert(root, x);
+    }
+    
+    void remove(int x) {
+        root = remove(root, x);
+    }
+    
+    bool search(int x) {
+        return search(root, x) != nullptr;
+    }
+    
+    void display() {
+        cout << "Preorder: "; preorder(root); cout << endl;
+        cout << "Inorder: "; inorder(root); cout << endl;
+        cout << "Postorder: "; postorder(root); cout << endl;
+    }
+};
+
+int main() {
+    BST tree;
+    
+    tree.insert(50);
+    tree.insert(30);
+    tree.insert(70);
+    tree.insert(20);
+    tree.insert(40);
+    tree.insert(60);
+    tree.insert(80);
+    
+    cout << "BST:" << endl;
+    tree.display();
+    
+    cout << "\nSearch 40: " << (tree.search(40) ? "Found" : "Not found") << endl;
+    cout << "Search 100: " << (tree.search(100) ? "Found" : "Not found") << endl;
+    
+    tree.remove(20);
+    cout << "\nAfter removing 20:" << endl;
+    tree.display();
+    
+    return 0;
+}
