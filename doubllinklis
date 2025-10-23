@@ -1,0 +1,112 @@
+#include <iostream>
+using namespace std;
+
+class DNode {
+public:
+    int data;
+    DNode* prev;
+    DNode* next;
+    
+    DNode(int val) {
+        data = val;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+class DoublyList {
+private:
+    DNode* head;
+    DNode* tail;
+    
+public:
+    DoublyList() {
+        head = nullptr;
+        tail = nullptr;
+    }
+    
+    void insertStart(int x) {
+        DNode* newNode = new DNode(x);
+        
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+    }
+    
+    void insertEnd(int x) {
+        DNode* newNode = new DNode(x);
+        
+        if (tail == nullptr) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+    }
+    
+    void deleteStart() {
+        if (head == nullptr) {
+            cout << "List empty!" << endl;
+            return;
+        }
+        
+        DNode* temp = head;
+        head = head->next;
+        
+        if (head != nullptr) head->prev = nullptr;
+        else tail = nullptr;
+        
+        delete temp;
+    }
+    
+    void deleteEnd() {
+        if (tail == nullptr) {
+            cout << "List empty!" << endl;
+            return;
+        }
+        
+        DNode* temp = tail;
+        tail = tail->prev;
+        
+        if (tail != nullptr) tail->next = nullptr;
+        else head = nullptr;
+        
+        delete temp;
+    }
+    
+    void display() {
+        DNode* temp = head;
+        cout << "Forward: ";
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->next;
+        }
+        cout << "NULL" << endl;
+    }
+};
+
+int main() {
+    DoublyList dlist;
+    
+    dlist.insertStart(30);
+    dlist.insertStart(20);
+    dlist.insertStart(10);
+    dlist.display();
+    
+    dlist.insertEnd(40);
+    dlist.insertEnd(50);
+    dlist.display();
+    
+    dlist.deleteStart();
+    dlist.display();
+    
+    dlist.deleteEnd();
+    dlist.display();
+    
+    return 0;
+}
